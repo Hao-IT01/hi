@@ -1,0 +1,41 @@
+from data_processing.crud import load_data, create_entry, read_data, update_entry, delete_entry
+from data_processing.cleaning import clean_missing_values, normalize_text_columns, remove_duplicates
+from data_processing.visualization import plot_average_rating_by_genre
+
+# Đường dẫn tới file CSV
+file_path = '/mnt/data/AppleStore.csv'
+
+# Bước 1: Tải dữ liệu
+data = load_data(file_path)
+
+# Bước 2: Thực hiện CRUD
+# Thêm dữ liệu mới
+new_entry = {
+    'id': 1234567890,
+    'track_name': 'New App',
+    'size_bytes': 50000000,
+    'price': 1.99,
+    'rating_count_tot': 500,
+    'rating_count_ver': 100,
+    'user_rating': 4.5,
+    'user_rating_ver': 4.0,
+    'prime_genre': 'Games'
+}
+data = create_entry(data, new_entry)
+
+# Cập nhật dữ liệu
+data = update_entry(data, index=0, updated_entry=new_entry)
+
+# Xóa dữ liệu
+data = delete_entry(data, index=0)
+
+# Bước 3: Làm sạch dữ liệu
+data = clean_missing_values(data)
+data = normalize_text_columns(data, columns=['track_name', 'prime_genre'])
+data = remove_duplicates(data)
+
+# Bước 4: Trực quan hóa dữ liệu
+plot_average_rating_by_genre(data)
+
+# Lưu dữ liệu đã cập nhật
+data.to_csv(file_path, index=False)
