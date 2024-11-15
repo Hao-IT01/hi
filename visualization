@@ -1,0 +1,15 @@
+import matplotlib.pyplot as plt
+
+# Vẽ biểu đồ thanh cho xếp hạng trung bình theo thể loại
+def plot_average_rating_by_genre(data):
+    average_ratings = data.groupby('prime_genre')['user_rating'].mean().sort_values()
+    
+    plt.figure(figsize=(10, 6))
+    average_ratings.plot(kind='bar', color='skyblue')
+    plt.title('Average User Rating by App Genre')
+    plt.xlabel('App Genre')
+    plt.ylabel('Average User Rating')
+    plt.xticks(rotation=45)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.show()
