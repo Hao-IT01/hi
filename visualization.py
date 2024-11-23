@@ -1,110 +1,108 @@
-"""
-visualization.py
-
-This module visualizes normalized data for two columns in the Apple App Store dataset.
-It includes:
-- Histograms for distribution analysis.
-- Box plots for outlier detection.
-- Line plots for trends over data indices.
-- Scatter plots for relationship visualization.
-
-Functions:
-- plot_histogram(df): Create histograms for normalized columns.
-- plot_boxplot(df): Create box plots for normalized columns.
-- plot_lineplot(df): Create line plots to show value trends.
-- plot_scatterplot(df): Create scatter plots for relationships.
-"""
-
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def normalize_data(df, columns):
-    """
-    Normalize the selected columns using Max-Abs Scaling.
+# Đọc tệp dữ liệu
+df = pd.read_csv("AppleStore.csv")
+print(df.head())
+print(df.describe(include="all"))
 
-    Args:
-        df (pd.DataFrame): Original dataset.
-        columns (list): List of columns to normalize.
+# biểu đồ 1: Phân phối các thể loại ứng dụng
+genre_counts = df['prime_genre'].value_counts()
+plt.figure(figsize=(10, 6))
+plt.bar(genre_counts.index, genre_counts.values, color='skyblue')
+plt.title('Distribution of App Genres')
+plt.xlabel('Genre')
+plt.ylabel('Number of Apps')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
 
-    Returns:
-        pd.DataFrame: DataFrame with normalized columns.
-    """
-    df_normalized = df[columns].copy()
-    for column in columns:
-        df_normalized[column] = df_normalized[column] / df_normalized[column].abs().max()
-    return df_normalized
+# Biểu đồ 2: Phân phối số lượt đánh giá
+plt.figure(figsize=(10, 6))
+plt.hist(df['rating_count_tot'], bins=50, color='orange', edgecolor='black')
+plt.title('Distribution of Total Ratings')
+plt.xlabel('Total Ratings')
+plt.ylabel('Frequency')
+plt.yscale('log')  # Sử dụng thang log
+plt.show()
 
-def plot_histogram(df):
-    """
-    Plot histograms for normalized columns.
+# Biểu đồ 3: Phân phối kích thước ứng dụng
+plt.figure(figsize=(10, 6))
+plt.hist(df['size_bytes'], bins=50, color='green', edgecolor='black')
+plt.title('Distribution of App Sizes')
+plt.xlabel('App Size (bytes)')
+plt.ylabel('Frequency')
+plt.xscale('log')  # Sử dụng thang log
+plt.show()
 
-    Args:
-        df (pd.DataFrame): DataFrame containing normalized data.
-    """
-    df.hist(bins=20, figsize=(10, 5), edgecolor='black', color='skyblue')  # Single color
-    plt.suptitle('Histograms of Normalized Data', fontsize=16)
-    plt.show()
+# Biểu đồ 4: Phân phối đánh giá trung bình
+plt.figure(figsize=(10, 6))
+plt.hist(df['user_rating'], bins=5, color='purple', edgecolor='black')
+plt.title('Distribution of User Ratings')
+plt.xlabel('User Rating')
+plt.ylabel('Frequency')
+plt.show()
 
-def plot_boxplot(df):
-    """
-    Plot box plots for normalized columns.
+# Biểu đồ 5: Đánh giá trung bình theo thể loại
+avg_rating_by_genre = df.groupby('prime_genre')['user_rating'].mean().sort_values()
+plt.figure(figsize=(12, 8))
+avg_rating_by_genre.plot(kind='barh', color='coral', edgecolor='black')
+plt.title('Average User Rating by Genre')
+plt.xlabel('Average Rating')
+plt.ylabel('Genre')
+plt.show()
 
-    Args:
-        df (pd.DataFrame): DataFrame containing normalized data.
-    """
-    df.plot(kind='box', figsize=(8, 6), patch_artist=True, color=dict(boxes="skyblue", whiskers="black"))
-    plt.title('Box Plot of Normalized Data', fontsize=16)
-    plt.ylabel('Normalized Values', fontsize=12)
-    plt.show()
+# Biểu đồ 6: Tổng số lượt đánh giá theo thể loại
+total_rating_by_genre = df.groupby('prime_genre')['rating_count_tot'].sum().sort_values()
+plt.figure(figsize=(12, 8))
+total_rating_by_genre.plot(kind='barh', color='teal', edgecolor='black')
+plt.title('Total Ratings by Genre')
+plt.xlabel('Total Ratings')
+plt.ylabel('Genre')
+plt.show()
 
-def plot_lineplot(df):
-    """
-    Plot line plots for normalized columns.
+# Biểu đồ 7: Giá trung bình theo thể loại
+avg_price_by_genre = df.groupby('prime_genre')['price'].mean().sort_values()
+plt.figure(figsize=(12, 8))
+avg_price_by_genre.plot(kind='barh', color='blue', edgecolor='black')
+plt.title('Average Price by Genre')
+plt.xlabel('Average Price (USD)')
+plt.ylabel('Genre')
+plt.show()
 
-    Args:
-        df (pd.DataFrame): DataFrame containing normalized data.
-    """
-    df.plot(kind='line', figsize=(10, 6), marker='o', linestyle='-', alpha=0.7)
-    plt.title('Line Plot of Normalized Data', fontsize=16)
-    plt.ylabel('Normalized Values', fontsize=12)
-    plt.xlabel('Data Index', fontsize=12)
-    plt.legend(title="Columns", fontsize=10)
-    plt.show()
+# Biểu đồ 8: Số ứng dụng theo xếp hạng nội dung
+content_rating_counts = df['cont_rating'].value_counts()
+plt.figure(figsize=(10, 6))
+content_rating_counts.plot(kind='bar', color='cyan', edgecolor='black')
+plt.title('Number of Apps by Content Rating')
+plt.xlabel('Content Rating')
+plt.ylabel('Number of Apps')
+plt.show()
 
-def plot_scatterplot(df):
-    """
-    Plot scatter plots for relationships between two normalized columns.
+# Biểu đồ 9: Số ứng dụng miễn phí và trả phí
+df['is_free'] = df['price'] == 0
+free_paid_counts = df['is_free'].value_counts()
+plt.figure(figsize=(10, 6))
+free_paid_counts.plot(kind='bar', color=['green', 'red'], edgecolor='black')
+plt.title('Free vs Paid Apps')
+plt.xlabel('Type')
+plt.ylabel('Number of Apps')
+plt.xticks([0, 1], ['Free', 'Paid'], rotation=0)
+plt.show()
 
-    Args:
-        df (pd.DataFrame): DataFrame containing normalized data.
-    """
-    plt.figure(figsize=(8, 6))
-    plt.scatter(df['rating_count_tot'], df['rating_count_ver'], alpha=0.7, color='blue', edgecolors='black')
-    plt.title('Scatter Plot: Rating Count Tot vs Rating Count Ver', fontsize=16)
-    plt.xlabel('Rating Count Tot (Normalized)', fontsize=12)
-    plt.ylabel('Rating Count Ver (Normalized)', fontsize=12)
-    plt.grid(True, linestyle='--', alpha=0.6)
-    plt.show()
+# Biểu đồ 10: Thể loại phổ biến nhất
+genre_counts = df['prime_genre'].value_counts()
+plt.figure(figsize=(10, 6))
+genre_counts.plot(kind='pie', autopct='%1.1f%%', startangle=140, colors=plt.cm.tab20.colors)
+plt.title('Most Popular App Genres')
+plt.ylabel('')
+plt.show()
 
-if __name__ == "__main__":
-    # Load the dataset
-    df = pd.read_csv("AppleStore.csv")
-
-    # Columns to normalize
-    columns_to_normalize = ["rating_count_tot", "rating_count_ver"]
-
-    # Normalize the data
-    df_normalized = normalize_data(df, columns_to_normalize)
-
-    # Visualize normalized data
-    print("Plotting histograms...")
-    plot_histogram(df_normalized)
-
-    print("Plotting box plots...")
-    plot_boxplot(df_normalized)
-
-    print("Plotting line plots...")
-    plot_lineplot(df_normalized)
-
-    print("Plotting scatter plots...")
-    plot_scatterplot(df_normalized)
+# Biểu đồ 11: Tỷ lệ các ứng dụng theo số thiết bị hỗ trợ
+device_support_counts = df['sup_devices.num'].value_counts().sort_index()
+plt.figure(figsize=(10, 6))
+device_support_counts.plot(kind='bar', color='gold', edgecolor='black')
+plt.title('Number of Apps by Supported Devices')
+plt.xlabel('Number of Supported Devices')
+plt.ylabel('Number of Apps')
+plt.show()
