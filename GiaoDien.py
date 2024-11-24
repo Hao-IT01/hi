@@ -1,6 +1,7 @@
 import tkinter as tk
 import pandas as pd
 from tkinter import ttk
+from tkinter import messagebox
 import CRUD
 df = pd.read_csv("AppleStore.csv", sep=",")
 root = tk.Tk()
@@ -116,8 +117,8 @@ def show_add_form():
         
         # Goi ham 
         CRUD.Create(df, new_data)
-        label = tk.Label(root, text="Dataset updated and saved", font=("Times New Roman", 20, "bold"))
-        label.pack(pady=10)
+        messagebox.showinfo("Notification", "Dataset updated and saved")
+        
         
 
     save_button = tk.Button(root, text="Save", font=("Times New Roman", 15), command=save_data)
@@ -159,7 +160,9 @@ def show_update_form():
         filtered_df = df[df["track_name"].str.contains(app_name, case=False)]
 
         if filtered_df.empty:
-            tk.Label(info_frame, text=f"No item found with name '{app_name}'.", font=("Times New Roman", 15), fg="red").pack()
+            messagebox.showinfo(
+                "Notification", f"No item found with name '{app_name}'."
+            )
             return
 
         # Hien thi thong tin tim kiem duoc
@@ -187,8 +190,9 @@ def show_update_form():
 
             for idx in filtered_df.index:
                 message = CRUD.Update(df, filtered_df.loc[idx, "track_name"], column_to_update, new_value)
-            label = tk.Label(root, text="Dataset updated and saved", font=("Times New Roman", 20, "bold"))
-            label.pack(pady=10)
+            messagebox.showinfo(
+                "Notification", "Dataset updated and saved"
+            )
 
         save_button = tk.Button(update_frame, text="Save", font=("Times New Roman", 15), command=save_update)
         save_button.grid(row=2, column=0, columnspan=2, pady=10)
@@ -233,7 +237,9 @@ def show_delete_form():
         filtered_df = df[df["track_name"].str.contains(app_name, case=False)]
 
         if filtered_df.empty:
-            tk.Label(result_frame, text=f"No item found with name '{app_name}'.", font=("Times New Roman", 15), fg="red").pack()
+            messagebox.showinfo(
+                "Notification", f"No item found with name '{app_name}'."
+            )
             return
 
         tk.Label(result_frame, text=f"Found {len(filtered_df)} item(s):", font=("Times New Roman", 15, "bold")).pack()
@@ -251,8 +257,8 @@ def show_delete_form():
                 message = CRUD.Delete(df, app_to_delete)
                 tk.Label(root, text=message, font=("Times New Roman", 15), fg="green").pack(pady=10)
             search_app()
-            label = tk.Label(root, text="Delete Successfully!", font=("Times New Roman", 20, "bold"))
-            label.pack(pady=10)
+            messagebox.showinfo("Notification", "Delete Successfully!")
+            
 
         delete_button = tk.Button(delete_frame, text="Delete All", font=("Times New Roman", 15), command=delete_app)
         delete_button.pack(pady=10)
