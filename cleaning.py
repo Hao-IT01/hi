@@ -1,26 +1,13 @@
-import pandas as pd
+# Data Cleaning
+import pandas
 import numpy as np
+import mlxtend
 
-# Xử lý các giá trị bị thiếu
-def clean_missing_values(data):
-    data = data.dropna()  # Hoặc sử dụng data.fillna(value) để thay thế giá trị
-    return data
+def check_missing_value (data):
+    """Nhập vào dữ liệu là 1 data frame và xuất ra bảng các cột có giá trị null"""
+    missing_values_count = data.isnull().sum()
+    return missing_values_count
 
-# Chuẩn hóa các cột văn bản (nếu cần)
-def normalize_text_columns(data, columns):
-    for col in columns:
-        data[col] = data[col].str.lower().str.strip()
-    return data
-
-# Loại bỏ dữ liệu trùng lặp
-def remove_duplicates(data):
-    data = data.drop_duplicates()
-    return data
-
-# Chuẩn hóa giá trị số bằng phương pháp Max-Abs Scaling
-def normalize_numeric_columns(data, columns):
-    df_max_scaled = data[columns].copy()
-    for column in df_max_scaled.columns:
-        df_max_scaled[column] = df_max_scaled[column] / df_max_scaled[column].abs().max()
-    data[columns] = df_max_scaled
-    return data
+def fill_na_value (data):
+    result = data.fillna(method='bfill', axis=0).fillna(0)
+    return result
